@@ -15,13 +15,13 @@ img{
 	width: 100%;
 }
 .knap{
-	background-color: white;
-	border: solid 1.5px black;
-	border-radius: 12px;
-	margin-left: 2%;
+	background-color: rgba(255, 255, 255, 0);
+	border: solid 1px black;
+	margin: 2%;
 }
 .knap:hover{
-	border:solid 1.5px #FA9628;
+  background-color: rgba(255, 255, 255, 0);
+	border:solid 2px black;
 	color:black;
 }
 .tidOgSted{
@@ -49,41 +49,16 @@ img{
 
 }
 }
-/* bestilling */
-   .bestilling{
-       padding:2%;
-   }
-    .overskrifter {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+      .formular{
+        margin-left:30px;
+        margin-right:30px;
       }
-    .bestilling .indhold {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-      .bestilling .pris {
-        display: grid;
-        grid-template-rows: 1fr 1fr;
-      }
-      .bestilling .pris p {
-        margin-bottom: -20px;
-      }
+.pris{
+  margin-top:-50px;
+  padding-top:-50px;
+  font-weight: bold;
+}
 
-      .total {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-      input {
-        width: 80px;
-        height: 30px;
-      }
-
-      /* .knap{
-          border: none;
-      }
-      .knap:hover{
-          border:none;
-      } */
 </style>
 <?php
 /**
@@ -110,6 +85,7 @@ get_header(); ?>
 	<img src="" alt="" class="picture" />
 	
 	<p class="beskrivelse"></p>
+  <p class="pris"></p>
     </div>
     <br>
     <div class="tidOgSted">
@@ -118,39 +94,21 @@ get_header(); ?>
   <p>SAMVÆR, Fælledvej 5, 2200 København</p>
   </div>
 </div>
-<section class="bestilling">
-      <div class="overskrifter">
-        <h3>Billetter</h3>
-        <h4>Pris</h4>
-        <h4>Antal</h4>
-      </div>
-      <hr />
-      <div class="indhold">
-        <p>Billetter</p>
-        <div class="pris">
-          <p id="pris"></p>
-        </div>
 
-       <div class="antal">
-          <input type="text" placeholder="name" id="uname" />
-      <input type="button"value="Find pris" onclick="send()" />
-      </div>
-      </div>
-      <hr />
-      <div class="total">
-        <h2>Total</h2>
-        <p id="totalPris"></p>
-      </div>
-      <div class="betal">
-        <button>Betal</button>
-      </div>
-    </section>
 </article>
 </section>
-
 		</main><!-- #main -->
 
+		
+	<!-- booking af bord ved hjælp af formular plugin -->	
+    <section class="formular">
+      <h2>Book bord</h2>
+	  <?php echo do_shortcode('[forminator_form id="579"]');?>
+    </section>
+
+
 <?php if ( ( is_page() && ! inspiro_is_frontpage() ) && ! has_post_thumbnail( get_queried_object_id() ) ) : ?>
+
 
 
 	</div><!-- #primary -->
@@ -158,48 +116,33 @@ get_header(); ?>
 
 <?php endif ?>
 <script>
+   
 	"use strict";
-//udskriv værdi fra input felt i konsollen
-  let uname = document.querySelector("#uname");
-      function send() {
-        console.log(uname.value);
-      }
-    
-// let veardi=uname.value;
-// let prisPaaVare=ret.pris;
-
-	let billede = document.querySelector
 	let ret;
+//data fra database indhentes
 	document.addEventListener("DOMContentLoaded",getJson);
 	async function getJson(){
 		console.log("id er",<?php echo get_the_ID()?>);
 		let jsonData=await fetch (`https://dahliarindom.dk/kea/eksamen2sem/wp-json/wp/v2/ret/<?php echo get_the_ID()?>`);
 		ret=await jsonData.json();
+    //funktionen visRet kaldes
 		visRet();
 	}
 	function visRet(){
-         let kroner=ret.pris;
-      console.log(uname.value*kroner)
-		console.log("visRet",ret);
-		
+    //indhold fra databse indsættes i DOM
 		document.querySelector("h1").textContent=ret.title.rendered;
-                    document.querySelector(".picture").src=ret.billede.guid;
-		
+    document.querySelector(".picture").src=ret.billede.guid;
 		document.querySelector("p").textContent=ret.beskrivelse;
-
-		document.querySelector(".knap").addEventListener("click",tilbage);
-        document.querySelector(".dato").textContent=ret.tidspunkt;
-        document.querySelector("#pris").textContent=ret.pris+" kr";
-        document.querySelector("#totalPris").textContent=uname.value*kroner+".00 kr";
-
-        // document.querySelector("#total").textContent=veardi*prisPaaVare;
-        
+    document.querySelector(".dato").textContent=ret.dato+" "+ret.tidspunkt;
+    document.querySelector(".pris").textContent=ret.pris+" kr";
+    //tilbageknap får en eventlistener der hører efter "click" og kalder funktionen "tilbage"
+    document.querySelector(".knap").addEventListener("click",tilbage);
 	}
+  //funktionen "tilbage" sørger for, at der ved klik loades den forrige url
 	function tilbage(){
 		history.back();
 	}
-
-
 </script>
+
 <?php
 get_footer();
