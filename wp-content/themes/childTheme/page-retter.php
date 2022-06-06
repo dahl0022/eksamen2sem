@@ -116,7 +116,7 @@ overflow-y: auto;
 /*styling af cocktail oversigt*/
      .container {
         position: relative;
-        max-width: 250px;
+        max-width: 200px;
         margin: 0 auto;
       }
 
@@ -126,7 +126,7 @@ overflow-y: auto;
 
       .container .content {
         position: absolute;
-        bottom: 35%;
+        bottom: 17%;
         background: #8B6D66;
         background: #8b6d666f;
         color: #f1f1f1;
